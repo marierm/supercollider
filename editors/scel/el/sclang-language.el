@@ -606,6 +606,14 @@ are considered."
 		(match-beginning 0)))))
        (sclang-message "No references to '%s'" name)))))
 
+(defcustom sclang-insert-method-args nil
+  "*When set to true, M-x sclang-show-method-args inserts method
+arguments in buffer instead of showing them in Mini buffer."
+  :group 'sclang-interface
+  :version "21.3"
+  :type 'boolean)
+
+
 (defun sclang-show-method-args ()
   "whooha. in full effect."
   (interactive)
@@ -634,7 +642,11 @@ are considered."
 (sclang-set-command-handler
  'methodArgs
  (lambda (args)
-   (and args (message "%s" args))))
+   (if sclang-insert-method-args
+       (save-excursion (and args (insert (replace-regexp-in-string " ?= ?" ": " args))))
+     (and args (message "%s" args))
+   )))
+
 
 (defun sclang-dump-full-interface (class)
   "Dump interface of CLASS."
